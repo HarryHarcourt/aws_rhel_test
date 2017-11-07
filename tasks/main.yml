@@ -1,0 +1,69 @@
+---
+###
+## Create Security Groups and EC2 Instances
+#
+
+# Wwe create our Main Security Group.
+# Basically the idea here is to allow SSH access
+# from your IP to the EC2 resources you will
+# start in your VPC.
+
+- name: Gather EC2 VPC facts
+  ec2_vpc_net_facts:
+    region: "{{ provider_region }}"
+  register: vpcs
+  tags:
+    - create
+
+- name: Getting the facts from the defaults via the Network template
+  set_fact:
+    from_template: "{{ lookup('template', './network.j2') }}"
+  vars:
+    to_template_aws_security_groups: "{{ aws_security_groups }}"
+    to_template_vpcs: "{{ vpcs }}"
+  tags:
+    - create
+
+- name: Provision EC2 security groups
+  ec2_group:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    region: "{{ item.region }}"
+    state: present
+    rules: "{{ item.rules }}"
+  with_items: "{{ from_template.aws_security_groups }}"
+  tags:
+    - create
+
+# Create our Servers from the templates
+
+#- name: Getting the facts from the defaults via the compute template
+#  set_fact:
+#    from_template: "{{ lookup('template', './compute.j2') }}"
+#  vars:
+#    to_template_instance_server_create: "{{ instance_server_create }}"
+#  tags:
+#    - create
+
+- name: Provision EC2 Instance
+  ec2:
+    region: "{{ provider_region }}"
+    group: "{{ item.security_group }}"
+    key_name: "{{ item.key_name }}"
+    instance_type: "{{ item.instance_type }}"
+    image: "{{ item.image }}"
+    state: absent
+    wait: yes
+    wait_timeout: 300
+    count: "{{ item.count }}"
+#    exact_count: "{{ item.exact_count }}"
+    count_tag: "{{ item.count_tags }}"
+    instance_tags: "{{ item.instance_tags }}"
+  with_items:
+    - "{{ rhel_7_0 }}"
+    - "{{ rhel_7_1 }}"
+    - "{{ rhel_7_2 }}"
+    - "{{ rhel_7_3 }}"
+    - "{{ rhel_7_4 }}"
+  tags:
+    - create

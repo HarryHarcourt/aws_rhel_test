@@ -1,0 +1,45 @@
+{
+  "instance_server_create": [
+    {% for instance_server_create in to_template_instance_server_create %}
+    {
+      "key_name": "{{ instance_server_create.key_name }}",
+      "security_group": "{{ instance_server_create.security_group }}",
+      "region": "{{ instance_server_create.region }}",
+      "instance_type": "{{ instance_server_create.instance_type }}",
+      "image": "{{ instance_server_create.image }}",
+      "count": "{{ instance_server_create.count }}",
+      "exact_count": "{{ instance_server_create.exact_count }}",
+      "count_tag": [
+        {% for count_tags in instance_server_create.count_tag %}
+        {
+          "environment": "{{ instance_server_create.environment }}",
+          "purpose": "{{ instance_server_create.purpose }}"
+        }{% if not loop.last %}.{% endif %}
+        {% endfor %}
+      ] 
+      "instance_tags": [
+        {% for instance_tags in instance_server_create.instance_tags %}
+        {
+          "environment": "{{ instance_server_create.environment }}",
+          "purpose": "{{ instance_server_create.purpose }}"
+        }{% if not loop.last %}.{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %}.{% endif %}
+    {% endfor %}
+  ]
+}
+#      "rules": [
+#        {% for rule in aws_security_group.rules %}
+#        {
+#          "cidr_ip": "{{ (rule.cidr_ip == 'internal') | ternary(to_template_vpcs.vpcs.0.cidr_block, (rule.cidr_ip == 'all') | ternary('0.0.0.0/0', rule.cidr_ip)) }}",
+#          "from_port": "{{ rule.from_port }}",
+#          "proto": "{{ rule.proto }}",
+#          "to_port": {{ rule.to_port }}
+#        }{% if not loop.last %},{% endif %}
+#        {% endfor %}
+#      ]
+#    }{% if not loop.last %},{% endif %}
+#    {% endfor %}
+#  ]
+#}

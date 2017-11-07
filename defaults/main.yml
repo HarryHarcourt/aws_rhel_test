@@ -1,0 +1,169 @@
+---
+###
+## Default file for the variables that the EC2 create will need
+#
+
+# Providers Region
+provider_region: us-west-2
+
+# Environment to be built out
+environ: demo
+
+# VPC Information
+vpc_name: "My VPC"
+vpc_cidr_block: "10.0.0.0/16"
+
+# For Security Group Rule
+#my_ip:          "71.238.76.67"
+
+# Subnets
+public_subnet_1_cidr:  "10.0.0.0/24"
+
+# Create the Security Groups
+# NOTE: The regions is specified again because of the use of a template
+aws_security_groups:
+  - name: RHEL-7.0
+    description: RHEL 7.0
+    region: us-west-2
+    rules: 
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: all
+
+  - name: RHEL-7.1 
+    description: RHEL 7.1
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: all
+
+  - name: RHEL-7.2 
+    description: RHEL 7.2
+    region: us-west-2
+    rules: 
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: internal
+
+  - name: RHEL-7.3
+    description: RHEL 7.3
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 80 
+        to_port: 80 
+        cidr_ip: internal
+
+  - name: RHEL-7.4
+    description: RHEL 7.4
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: internal
+
+#instance_server_create:
+rhel_7_0: { name: rhel-7.0,
+    description: RHEL-7.0,
+    security_group: RHEL-7.0,
+    key_name: BenWright,
+    instance_type: t2.micro,
+    image: ami-212e0911,
+    count: 1,
+    exact_count: 1,
+    count_tags: { environment: demo, purpose: cistesting },
+#      - environment: "{{ environ }}"
+#      - purpose: "webserver"
+    instance_tags: { environment: demo, purpose: cistesting }
+#      - environment: "{{ environ }}"
+#      - purpose: webserver
+  }
+
+rhel_7_1: { name: rhel-7.1,
+    description : RHEL-7.1,
+    security_group: RHEL-7.1,
+    key_name: BenWright,
+    instance_type: t2.micro,
+    image: ami-c15a52f1,
+    count: 1,
+    exact_count: 1,
+    count_tags: { environment: demo, purpose: cistesting },
+#      environment: "{{ environ }}",
+#      purpose: appserver
+    instance_tags: { environment: demo, purpose: cistesting }
+#      environment: "{{ environ }}",
+#      purpose: appserver
+  }
+
+rhel_7_2: { name: rhel-7.2,
+    description: RHEL-7.2,
+    security_group: RHEL-7.2,
+    key_name: BenWright,
+    instance_type: t2.micro,
+    image: ami-5dd3743d,
+    count: 1,
+    exact_count: 1,
+    count_tags: { environment: demo, purpose: cistesting },
+#      environment: "{{ environ }}",
+#      purpose: oradbserver
+    instance_tags: { environment: demo, purpose: cistesting }
+#      environment: "{{ environ }}",
+#      purpose: oradbserver
+  }
+
+rhel_7_3: { name: rhel-7.3,
+    description: RHEL-7.3,
+    security_group: RHEL-7.3,
+    key_name: BenWright,
+    instance_type: t2.micro,
+    image: ami-38fd2558,
+    count: 1,
+    exact_count: 1,
+    count_tags: { environment: demo, purpose: cistesting },
+#      environment: "{{ environ }}",
+#      purpose: mssqlserver
+    instance_tags: { environment: demo, purpose: cistesting }
+#      environment: "{{ environ }}",
+#      purpose: mssqlserver
+  }
+
+rhel_7_4: { name: rhel-7.4,
+    description: RHEL-7.4,
+    security_group: RHEL-7.4,
+    key_name: BenWright,
+    instance_type: t2.micro,
+    image: ami-9fa343e7,
+    count: 1,
+    exact_count: 1,
+    count_tags: { environment: demo, purpose: cistesting },
+#      environment: "{{ environ }}",
+#      purpose: mssqlserver
+    instance_tags: { environment: demo, purpose: cistesting }
+#      environment: "{{ environ }}",
+#      purpose: mssqlserver
+  }

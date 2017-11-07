@@ -1,0 +1,136 @@
+---
+###
+## Default file for the variables that the EC2 create will need
+#
+
+# Providers Region
+provider_region: us-west-2
+
+# Environment to be built out
+environ: demo
+
+# VPC Information
+vpc_name: "My VPC"
+vpc_cidr_block: "10.0.0.0/16"
+
+# For Security Group Rule
+#my_ip:          "71.238.76.67"
+
+# Subnets
+public_subnet_1_cidr:  "10.0.0.0/24"
+
+# Create the Security Groups
+# NOTE: The regions is specified again because of the use of a template
+aws_security_groups:
+  - name: Webservers
+    description: Security group for webservers
+    region: us-west-2
+    rules: 
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: all
+
+  - name: Appservers
+    description: Security group for Application Servers
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 8080
+        to_port: 8081
+        cidr_ip: all
+
+  - name: OraDBservers
+    description: Security group for internal database access
+    region: us-west-2
+    rules: 
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: all
+      - proto: tcp
+        from_port: 3306
+        to_port: 3306
+        cidr_ip: internal
+
+  - name: MSSQLDatabases
+    description: Security group for internal MS SQL database access
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: 3389
+        to_port: 3389
+        cidr_ip: all
+      - proto: tcp
+        from_port: 1443
+        to_port: 1443
+        cidr_ip: internal
+
+instance_server_create:
+  - name: WebServers
+    description: Server image templates for Web Servers
+    security_group: Webservers
+    key_name: BenWright
+    instance_type: t2.micro
+    image: ami-b55a51cc
+    count: 1
+    exact_count: 1
+    count_tag:
+      environment: "{{ environ }}"
+      purpose: webserver
+    instance_tags:
+      environment: "{{ environ }}"
+      purpose: webserver
+
+  - name: Application Server
+    description : Server image templates for Application Servers
+    security_group: Appservers
+    key_name: BenWright
+    instance_type: t2.micro
+    image: ami-b55a51cc
+    count: 1
+    exact_count: 1
+    count_tag:
+      environment: "{{ environ }}"
+      purpose: appserver
+    instance_tags:
+      environment: "{{ environ }}"
+      purpose: appserver
+
+  - name: Database Server
+    description: Server image templates for Linux DB Server
+    security_group: OraDBservers
+    key_name: BenWright
+    instance_type: t2.micro
+    image: ami-b55a51cc
+    count: 1
+    exact_count: 1
+    count_tag:
+      environment: "{{ environ }}"
+      purpose: oradbserver
+    instance_tags:
+      environment: "{{ environ }}"
+      purpose: oradbserver
+
+  - name: MS Database Server
+    description: Server image templates for MS SQL DB Server 
+    security_group: MSSQLservers
+    key_name: BenWright
+    instance_type: t2.micro
+    image: ami-c4ffe3bd
+    count: 1
+    count_tag:
+      environment: "{{ environ }}"
+      purpose: mssqlserver
+    instance_tags:
+      environment: "{{ environ }}"
+      purpose: mssqlserver
+
