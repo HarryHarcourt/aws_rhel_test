@@ -1,0 +1,21 @@
+{
+  "aws_security_groups_egress": [
+    {% for aws_security_group_egress in to_template_aws_security_groups_egress %}
+    {
+      "description": "{{ aws_security_group_egress.description }}",
+      "name": "{{ aws_security_group_egress.name }}",
+      "region": "{{ aws_security_group_egress.region }}",
+      "rules": [
+        {% for rule in aws_security_group_egress.rules %}
+        {
+          "cidr_ip": "{{ (rule.cidr_ip == 'internal') | ternary(to_template_vpcs.vpcs.0.cidr_block, (rule.cidr_ip == 'all') | ternary('0.0.0.0/0', rule.cidr_ip)) }}",
+          "from_port": "{{ rule.from_port }}",
+          "proto": "{{ rule.proto }}",
+          "to_port": {{ rule.to_port }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}

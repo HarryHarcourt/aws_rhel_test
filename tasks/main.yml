@@ -15,7 +15,7 @@
   tags:
     - create
 
-- name: Getting the facts from the defaults via the Network template
+- name: Getting the facts from the defaults via the Network template for ingress rules
   set_fact:
     from_template: "{{ lookup('template', './network.j2') }}"
   vars:
@@ -24,7 +24,7 @@
   tags:
     - create
 
-- name: Provision EC2 security groups
+- name: Provision EC2 security groups for inbound rules
   ec2_group:
     name: "{{ item.name }}"
     description: "{{ item.description }}"
@@ -34,6 +34,56 @@
   with_items: "{{ from_template.aws_security_groups }}"
   tags:
     - create
+
+- name: Debug the variables
+  debug: var=hostvars[inventory_hostname]
+  tags:
+    - create
+
+#- name: Create the egress rules against the existing security groups (note not best way as other via template)
+#  ec2_group:
+#    name: "{{ item.name }}"
+#    description: "{{ item.description }}"
+#    region: "{{ item.region }}"
+#    state: present
+#    rules_egress:
+#      - proto: "{{ item.proto }}"
+#        from_port: "{{ item.from_port }}"
+#        to_port: "{{ item.to_port }}"
+#        cidr_ip: "{{ item.cidr_ip }}"
+#    with_items:
+#      - "{{ aws_security_groups_egress_7_0 }}"
+#      - "{{ aws_security_groups_egress_7_1 }}"
+#      - "{{ aws_security_groups_egress_7_2 }}"
+#      - "{{ aws_security_groups_egress_7_3 }}"
+#      - "(( aws_security_groups_egress_7_4 }}"
+#    tags:
+#      - create
+
+- name: Getting the facts from the defaults via the Network template for egress rules
+  set_fact:
+    from_template_egress: "{{ lookup('template', './network_egress.j2') }}"
+  vars:
+    to_template_aws_security_groups_egress: "{{ aws_security_groups_egress }}"
+    to_template_vpcs: "{{ vpcs }}"
+  tags:
+    - create
+
+- name: Debug the variables
+  debug: var=hostvars[inventory_hostname]
+  tags:
+    - create
+
+#- name: Provision EC2 security groups for outbound rules
+#  ec2_group:
+#    name: "{{ item.name }}"
+#    description: "{{ item.description }}"
+#    region: "{{ item.region }}"
+#    state: present
+#    rules_egress: "{{ item.rules }}"
+#  with_items: "{{ from_template.aws_security_groups_egress }}"
+#  tags:
+#    - create
 
 # Create our Servers from the templates
 
@@ -52,7 +102,7 @@
     key_name: "{{ item.key_name }}"
     instance_type: "{{ item.instance_type }}"
     image: "{{ item.image }}"
-    state: absent
+    state: present
     wait: yes
     wait_timeout: 300
     count: "{{ item.count }}"
@@ -66,4 +116,4 @@
     - "{{ rhel_7_3 }}"
     - "{{ rhel_7_4 }}"
   tags:
-    - create
+    - ec2

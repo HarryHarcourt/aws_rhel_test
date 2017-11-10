@@ -87,6 +87,52 @@ aws_security_groups:
         to_port: 80
         cidr_ip: internal
 
+aws_security_groups_egress:
+  - name: RHEL-7.0
+    description: RHEL 7.0
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: all
+        to_port: all
+        cidr_ip: all
+
+  - name: RHEL-7.1
+    description: RHEL 7.1
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: "all"
+        to_port: "all"
+        cidr_ip: all
+
+  - name: RHEL-7.2
+    description: RHEL 7.2
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: all
+        to_port: all
+        cidr_ip: all
+
+  - name: RHEL-7.3
+    description: RHEL 7.3
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: all
+        to_port: all
+        cidr_ip: all
+
+  - name: RHEL-7.4
+    description: RHEL 7.4
+    region: us-west-2
+    rules:
+      - proto: tcp
+        from_port: all
+        to_port: all
+        cidr_ip: all
+
 #instance_server_create:
 rhel_7_0: { name: rhel-7.0,
     description: RHEL-7.0,
